@@ -20,7 +20,7 @@ if (isset($_GET['menu'])) {
             </a>
             <b class="arrow"></b>
         </li>
-
+      <?php if($_SESSION['apriori_resep_level']==1 ){  ?>
         <li <?php echo ($menu_active == 'data_transaksi') ? "class='active'" : ""; ?> >
             <a href="index.php?menu=data_transaksi">
                 <i class="menu-icon fa fa-table"></i>
@@ -28,7 +28,17 @@ if (isset($_GET['menu'])) {
             </a>
             <b class="arrow"></b>
         </li>
-
+      <?php } else{?>
+            <li <?php echo ($menu_active == 'rekomendasi') ? "class='active'" : ""; ?> >
+            <a href="index.php?menu=rekomendasi">
+                <i class="menu-icon fa fa-table"></i>
+                <span class="menu-text"> Rekomendasi Resep  </span>
+            </a>
+            <b class="arrow"></b>
+        </li>
+        <?php }
+        ?>
+         <?php if($_SESSION['apriori_resep_level']==1 ){  ?>
         <li <?php echo ($menu_active == 'proses_apriori') ? "class='active'" : ""; ?>  >
             <a href="index.php?menu=proses_apriori">
                 <i class="menu-icon fa fa-bolt"></i>
@@ -36,7 +46,8 @@ if (isset($_GET['menu'])) {
             </a>
             <b class="arrow"></b>
         </li>
-
+      <?php } ?>
+      <?php if($_SESSION['apriori_resep_level']==1 ){  ?>
         <li <?php echo ($menu_active == 'hasil') ? "class='active'" : ""; ?>  >
             <a href="index.php?menu=hasil">
                 <i class="menu-icon fa fa-book"></i>
@@ -44,7 +55,7 @@ if (isset($_GET['menu'])) {
             </a>
             <b class="arrow"></b>
         </li>
-
+        <?php } ?>
 
         <li class="">
             <a href="logout.php">

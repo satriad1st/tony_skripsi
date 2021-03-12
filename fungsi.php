@@ -1,13 +1,13 @@
 <?php
 
 function can_access_menu($menu){
-    if($_SESSION['apriori_resep_level']==2 & ($menu=='hasil_rule' || $menu=='view_rule')){
+    if($_SESSION['apriori_resep_level']==0 ){
         return true;
     }
     if($_SESSION['apriori_resep_level']==1){
         return true;
     }
-    return false;
+    return false;   
 }
 //START USERS===================================================================
 /**

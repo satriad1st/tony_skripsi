@@ -30,75 +30,82 @@ if(isset($_GET['pesan_success'])){
 
 if(isset($_POST['submit'])){
     // if(!$input_error){
-    $data = new Spreadsheet_Excel_Reader($_FILES['file_data_transaksi']['tmp_name']);
-        echo "jos";
-        $baris = $data->rowcount($sheet_index=0);
-        $column = $data->colcount($sheet_index=0);
-        //import data excel dari baris kedua, karena baris pertama adalah nama kolom
-        // $temp_date = $temp_produk = "";
-        for ($i=2; $i<=$baris; $i++) {
-            for($c=1; $c<=$column; $c++){
-                $value[$c] = $data->val($i, $c);
+    if ($_FILES['file_data_transaksi']['size'] == 0)
+    {
+     ?>
+     <script> location.replace("?menu=data_transaksi&pesan_error=Silahkan Tambahkan File Terlebih Dahulu"); </script>
+     <?php
+    }else{
+            $data = new Spreadsheet_Excel_Reader($_FILES['file_data_transaksi']['tmp_name']);
+            $baris = $data->rowcount($sheet_index=0);
+            $column = $data->colcount($sheet_index=0);
+            //import data excel dari baris kedua, karena baris pertama adalah nama kolom
+            // $temp_date = $temp_produk = "";
+            for ($i=2; $i<=$baris; $i++) {
+                for($c=1; $c<=$column; $c++){
+                    $value[$c] = $data->val($i, $c);
+                }
+    
+                // if($i==2){
+                //     $temp_produk .= $value[3];
+                // }
+                // else{
+                //     if($temp_date == $value[1]){
+                //         $temp_produk .= ",".$value[3];
+                //     }
+                //     else{
+                        $table = "transaksi";
+                        // $produkIn = get_produk_to_in($temp_produk);
+                        $temp_date = format_date($value[1]);
+                        $produkIn = $value[2];
+                        $menu = $value[3];
+                        $reference = $value[4];
+                        
+                        //mencegah ada jarak spasi
+                        $produkIn = str_replace(" ,", ",", $produkIn);
+                        $produkIn = str_replace("  ,", ",", $produkIn);
+                        $produkIn = str_replace("   ,", ",", $produkIn);
+                        $produkIn = str_replace("    ,", ",", $produkIn);
+                        $produkIn = str_replace(", ", ",", $produkIn);
+                        $produkIn = str_replace(",  ", ",", $produkIn);
+                        $produkIn = str_replace(",   ", ",", $produkIn);
+                        $produkIn = str_replace(",    ", ",", $produkIn);
+                        $menu = str_replace(" ,", ",", $menu);
+                        $menu = str_replace("  ,", ",", $menu);
+                        $menu = str_replace("   ,", ",", $menu);
+                        $menu = str_replace("    ,", ",", $menu);
+                        $menu = str_replace(", ", ",", $menu);
+                        $menu = str_replace(",  ", ",", $menu);
+                        $menu = str_replace(",   ", ",", $menu);
+                        $menu = str_replace(",    ", ",", $menu);
+                        
+                        //$item1 = explode(",", $produkIn);
+                        
+                        
+    //                    $field_value = array("transaction_date"=>($temp_date),
+    //                        "produk"=>$produkIn);
+    //                    $query = $db_object->insert_record($table, $field_value);
+                        $sql = "INSERT INTO transaksi (transaction_date, produk, menu, ref) VALUES ";
+                        $value_in = array();
+                        //foreach ($item1 as $key => $isi) {
+                          //  $value_in[] = "('$temp_date' , '$isi' )";
+                        //}
+                        //$value_to_sql_in = implode(",", $value_in);
+                        //$sql .= $value_to_sql_in;
+                        $sql .= " ('$temp_date', '$produkIn', '$menu', '$reference')";
+                        $db_object->db_query($sql);
+    
+                //         $temp_produk = $value[3];
+                //     }
+                // }
+                
+                // $temp_date = $value[1];
             }
-
-            // if($i==2){
-            //     $temp_produk .= $value[3];
-            // }
-            // else{
-            //     if($temp_date == $value[1]){
-            //         $temp_produk .= ",".$value[3];
-            //     }
-            //     else{
-                    $table = "transaksi";
-                    // $produkIn = get_produk_to_in($temp_produk);
-                    $temp_date = format_date($value[1]);
-                    $produkIn = $value[2];
-                    $menu = $value[3];
-                    $reference = $value[4];
-                    
-                    //mencegah ada jarak spasi
-                    $produkIn = str_replace(" ,", ",", $produkIn);
-                    $produkIn = str_replace("  ,", ",", $produkIn);
-                    $produkIn = str_replace("   ,", ",", $produkIn);
-                    $produkIn = str_replace("    ,", ",", $produkIn);
-                    $produkIn = str_replace(", ", ",", $produkIn);
-                    $produkIn = str_replace(",  ", ",", $produkIn);
-                    $produkIn = str_replace(",   ", ",", $produkIn);
-                    $produkIn = str_replace(",    ", ",", $produkIn);
-                    $menu = str_replace(" ,", ",", $menu);
-                    $menu = str_replace("  ,", ",", $menu);
-                    $menu = str_replace("   ,", ",", $menu);
-                    $menu = str_replace("    ,", ",", $menu);
-                    $menu = str_replace(", ", ",", $menu);
-                    $menu = str_replace(",  ", ",", $menu);
-                    $menu = str_replace(",   ", ",", $menu);
-                    $menu = str_replace(",    ", ",", $menu);
-                    
-                    //$item1 = explode(",", $produkIn);
-                    
-                    
-//                    $field_value = array("transaction_date"=>($temp_date),
-//                        "produk"=>$produkIn);
-//                    $query = $db_object->insert_record($table, $field_value);
-                    $sql = "INSERT INTO transaksi (transaction_date, produk, menu, ref) VALUES ";
-                    $value_in = array();
-                    //foreach ($item1 as $key => $isi) {
-                      //  $value_in[] = "('$temp_date' , '$isi' )";
-                    //}
-                    //$value_to_sql_in = implode(",", $value_in);
-                    //$sql .= $value_to_sql_in;
-                    $sql .= " ('$temp_date', '$produkIn', '$menu', '$reference')";
-                    $db_object->db_query($sql);
-
-            //         $temp_produk = $value[3];
-            //     }
-            // }
-            
-            // $temp_date = $value[1];
-        }
         ?>
-        <script> location.replace("?menu=data_transaksi&pesan_success=Data berhasil disimpan"); </script>
-        <?php
+        <script> location.replace("?menu=data_transaksi&pesan_success=Data berhasil disimpan kedatabase"); </script>
+ 
+    <?php
+    }
 }
 
 if(isset($_POST['delete'])){
@@ -176,7 +183,7 @@ $jumlah=$db_object->db_num_rows($query);
                             echo "<td>".format_date2($row['transaction_date'])."</td>";
                             echo "<td>".$row['produk']."</td>";
                             echo "<td>".$row['menu']."</td>";
-                            echo "<td>".$row['ref']."</td>";
+                            echo "<td><a href='".$row['ref']."' target='_blank' >".$row['ref']."</a></td>";
                         echo "</tr>";
                         $no++;
                     }
