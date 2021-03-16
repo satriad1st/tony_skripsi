@@ -60,21 +60,25 @@ if(isset($_POST['find'])){
     transaksi";
     $query2=$db_object->db_query($sql2);
     $jumlah2=$db_object->db_num_rows($query2);
-    $score = [];
-    $bahan = [];
-    $ref = [];
-    $produk =[];    
     $temp ="";
+    $totalScore = 0;
     while($row=$db_object->db_fetch_array($query2)){
-        array_push($produk,$row['produk']);
-        array_push($bahan,$row['menu']);
-        array_push($ref,$row['ref']);
         $temp=similar_text($data,$row['produk']);
-        array_push($score,$temp);
+        $id = $row['id'];
+        $table = "transaksi";
+        $sql = "UPDATE transaksi SET score=".$temp." WHERE id=";
+        $sql .= "$id";
+        $db_object->db_query($sql);
+        $totalScore = $totalScore + $temp;
     }
-    $maxVal = max($score);
-    $maxKey = array_search($maxVal, $score);
-
+    $average = $totalScore / $jumlah2;
+    $sql3 = "SELECT
+    *
+    FROM
+    transaksi WHERE score>=$average ORDER BY score DESC";
+    
+    $query3=$db_object->db_query($sql3);
+    $jumlah3=$db_object->db_num_rows($query3);
     ?>
   
    <?php
@@ -144,7 +148,7 @@ $jumlah=$db_object->db_num_rows($query);
         </form>
         </div>
     </div>
-    <?php if(count($produk)>0) { ?>
+    <?php if($jumlah3>0) { ?>
     <div class="col-sm-8">
         <div class="widget-box">
             <p style="margin-left:10px;font-weight:bold;margin-top:5px;">Resep yang paling mungkin untuk bahan yang kamu miliki yaitu : </p>
@@ -156,12 +160,14 @@ $jumlah=$db_object->db_num_rows($query);
                 </tr>
                 <?php
                     $no = 1;
+                    while($row=$db_object->db_fetch_array($query3)){
                         echo "<tr>";
                             echo "<td>".$no."</td>";
-                            echo "<td>".$bahan[$maxKey] ."</td>";
-                            echo "<td><a href='".$ref[$maxKey]."' target='_blank' >".$ref[$maxKey]."</a></td>";
+                            echo "<td>".$row['menu']."</td>";
+                            echo "<td><a href='".$row['ref']."' target='_blank' >".$row['ref']."</a></td>";
                         echo "</tr>";
                         $no++;
+                    }
                     ?>
             </table>
         </div>
