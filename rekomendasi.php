@@ -93,14 +93,27 @@ if(isset($_POST['submit'])){
      <script> location.replace("?menu=rekomendasi&pesan_error=Silahkan Bahan Makanan Yang Kamu Miliki"); </script>
      <?php
     }else{
-            $data = $_POST['bahan'];
-            $table = "temporary";
+        
+            $temporary = "SELECT
+            *
+            FROM
+            temporary";
+            $query=$db_object->db_query($temporary);
+            $jumlah=$db_object->db_num_rows($query);
+            if($jumlah<3){
+                $data = $_POST['bahan'];
+                $table = "temporary";
 
-            $sql = "INSERT INTO temporary (menu) VALUES";
-            $sql .= " ('$data')";
-            $db_object->db_query($sql);
-        ?>
-        <script> location.replace("?menu=rekomendasi&pesan_success=Data berhasil disimpan kedatabase"); </script>
+                $sql = "INSERT INTO temporary (menu) VALUES";
+                $sql .= " ('$data')";
+                $db_object->db_query($sql);
+                ?>
+                  <script> location.replace("?menu=rekomendasi&pesan_success=Data berhasil disimpan kedatabase"); </script>
+                <?php 
+            } else{
+        ?>  
+            <script> location.replace("?menu=rekomendasi&pesan_error=Maksimal Item Yang Dapat Diinputkan Hanya 3"); </script>
+        <?php } ?>
             
     <?php
     }
@@ -142,6 +155,8 @@ $jumlah=$db_object->db_num_rows($query);
                         <button name="find" type="submit"  class="btn btn-success btn-sm" style="margin-top:10px;">
                             <i class="ace-icon fa fa-search bigger-200"></i> Cari Rekomendasi
                         </button>
+                        
+                        <span style="font-size:10px;">*Maksimal Input 3 Item</span>
                     </div>
                 </div>
             </div>
@@ -177,50 +192,50 @@ $jumlah=$db_object->db_num_rows($query);
 <?php } ?>
             <div class="row">
                 <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-body">
-                    <div class="widget-main">
-            <?php
-            if (!empty($pesan_error)) {
-                display_error($pesan_error);
-            }
-            if (!empty($pesan_success)) {
-                display_success($pesan_success);
-            }
+                    <div class="widget-box">
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <?php
+                                if (!empty($pesan_error)) {
+                                    display_error($pesan_error);
+                                }
+                                if (!empty($pesan_success)) {
+                                    display_success($pesan_success);
+                                }
 
-            echo "Jumlah data: ".$jumlah."<br>";
-            if($jumlah==0){
-                echo "Data kosong...";
-            }
-            else{
-            ?>
-            <table class='table table-bordered table-striped  table-hover'>
-                <tr>
-                <th>No</th>
-                <th>Bahan</th>
-                <th>Aksi</th>
-                </tr>
-                <?php
-                    $no=1;
-                    while($row=$db_object->db_fetch_array($query)){
-                        echo "<tr>";
-                            echo "<td>".$no."</td>";
-                            echo "<td>".$row['menu']."</td>";
-                            echo "<td> <a href='index.php?menu=rekomendasi&action=delete&id=".$row['id']."'". "class='btn btn-app btn-danger btn-sm' > Delete
-                            </a></td>";
-                        echo "</tr>";
-                        $no++;
-                    }
-                    ?>
-            </table>
-            <?php
-            }
-            ?>
-            </div>
-            </div>
+                                echo "Jumlah data: ".$jumlah."<br>";
+                                if($jumlah==0){
+                                    echo "Data kosong...";
+                                }
+                                else{
+                                ?>
+                                <table class='table table-bordered table-striped  table-hover'>
+                                    <tr>
+                                    <th>No</th>
+                                    <th>Bahan</th>
+                                    <th>Aksi</th>
+                                    </tr>
+                                    <?php
+                                        $no=1;
+                                        while($row=$db_object->db_fetch_array($query)){
+                                            echo "<tr>";
+                                                echo "<td>".$no."</td>";
+                                                echo "<td>".$row['menu']."</td>";
+                                                echo "<td> <a href='index.php?menu=rekomendasi&action=delete&id=".$row['id']."'". "class='btn btn-app btn-danger btn-sm' > Delete
+                                                </a></td>";
+                                            echo "</tr>";
+                                            $no++;
+                                        }
+                                        ?>
+                                </table>
+                                <?php
+                                }
+                                ?>
+                            </div>
+                        </div>
                     </div>
+                 </div>
             </div>
-                </div>
         </div>
     </div>
 </div>
